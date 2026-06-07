@@ -1,139 +1,189 @@
 # TaskFlow – Personal Task Manager
 
-A full-stack personal task manager built with **React + Node.js/Express + JSON file storage**.
+## 1. Project Title & Description
+
+**TaskFlow** is a full-stack personal task manager built for Exercise 1. It allows a single user to create, view, update, and delete personal tasks. The app supports filtering by status, searching by title, drag-and-drop reordering, overdue highlighting, and persists all data on the backend across sessions.
 
 ---
 
-## 📁 Project Structure
+## 2. Live Demo
 
-```
-task-manager/
-├── backend/          ← Node.js Express API
-│   ├── server.js
-│   ├── package.json
-│   └── tasks.json    ← auto-created on first run
-└── frontend/         ← React App
-    ├── src/
-    │   ├── App.js
-    │   ├── App.css
-    │   └── index.js
-    ├── public/
-    │   └── index.html
-    └── package.json
-```
+🔗 **Frontend (Live):** https://task-manager-mu-wheat.vercel.app  
+🔗 **Backend API (Live):** https://task-manager-w349.onrender.com
 
 ---
 
-## 🚀 Run on Your PC (Local Development)
+## 3. Tech Stack
 
-### Step 1 – Start the Backend
+| Layer | Technology | Why |
+|-------|-----------|-----|
+| Frontend | React 18 | Component-based UI, fast rendering |
+| Drag & Drop | @dnd-kit/core + @dnd-kit/sortable | Lightweight, accessible DnD for React |
+| Styling | CSS3 + Google Fonts (Inter) | Clean custom design, no heavy UI library |
+| Backend | Node.js + Express | Simple REST API, minimal setup |
+| Storage | JSON file (tasks.json) | Zero-config persistence, no DB needed |
+| IDs | uuid v4 | Unique task identifiers |
+| Frontend Hosting | Vercel | Free, auto-deploys from GitHub |
+| Backend Hosting | Render | Free Node.js hosting |
 
+---
+
+## 4. How to Run Locally
+
+> Assumes you have **Node.js** installed. That's all you need.
+
+### Step 1 – Clone the repo
 ```bash
-cd task-manager/backend
+git clone https://github.com/dikshajoshi1/Task_manager.git
+cd Task_manager
+```
+
+### Step 2 – Start the Backend
+```bash
+cd backend
 npm install
 npm start
 ```
-
 Backend runs at: **http://localhost:5000**
 
-> For auto-restart on file changes: `npm run dev` (uses nodemon)
-
----
-
-### Step 2 – Start the Frontend
-
-Open a **new terminal**:
-
+### Step 3 – Start the Frontend (new terminal)
 ```bash
-cd task-manager/frontend
+cd frontend
 npm install
 npm start
 ```
-
 Frontend runs at: **http://localhost:3000**
 
-The `"proxy": "http://localhost:5000"` in frontend's package.json automatically routes API calls to the backend.
+> The `"proxy": "http://localhost:5000"` in frontend/package.json automatically routes API calls to the backend. No extra config needed.
 
 ---
 
-## ✅ Features Implemented
+## 5. API Documentation
 
-| Feature | Status |
-|---|---|
-| Add task (title required, description + due date optional) | ✅ |
-| View tasks sorted by newest first | ✅ |
-| Mark task complete / incomplete (toggle) | ✅ |
-| Edit task (title, description, due date) | ✅ |
-| Delete task with confirmation prompt | ✅ |
-| Filter by All / Active / Completed | ✅ |
-| Active vs Completed count on screen | ✅ |
-| Visually distinguish overdue tasks | ✅ |
-| Empty state UI | ✅ |
-| Search tasks by title | ✅ |
-| Persist tasks across restarts (JSON file) | ✅ |
-| Drag-and-drop to reorder tasks | ✅ |
+Base URL (local): `http://localhost:5000`  
+Base URL (production): `https://task-manager-w349.onrender.com`
 
----
+### GET /api/tasks
+Fetch all tasks, sorted by newest first.
 
-## 🌍 Deploy for FREE
-
-### Option A: Railway (Recommended – easiest, one platform)
-
-1. Push your code to **GitHub** (create a repo, push both frontend and backend folders).
-
-2. Go to **https://railway.app** → Sign up free with GitHub.
-
-3. **Deploy Backend:**
-   - New Project → Deploy from GitHub Repo → select `backend` folder
-   - Railway auto-detects Node.js and runs `npm start`
-   - Copy the generated URL (e.g. `https://your-app.railway.app`)
-
-4. **Deploy Frontend:**
-   - In `frontend/package.json`, replace the proxy line:
-     ```json
-     "proxy": "https://your-app.railway.app"
-     ```
-   - Or set `REACT_APP_API_URL=https://your-app.railway.app` as env variable
-     and update `const API = process.env.REACT_APP_API_URL + "/api/tasks"` in App.js
-   - New Project → Deploy from GitHub Repo → select `frontend` folder
-   - Add build command: `npm run build`
-   - Add start command: `npx serve -s build`
+- **Method:** GET  
+- **Path:** `/api/tasks`  
+- **Request Body:** None  
+- **Response:**
+```json
+[
+  {
+    "id": "uuid-string",
+    "title": "Buy groceries",
+    "description": "Milk, eggs, bread",
+    "dueDate": "2026-06-10T00:00:00.000Z",
+    "completed": false,
+    "createdAt": "2026-06-07T14:30:00.000Z",
+    "order": 0
+  }
+]
+```
 
 ---
 
-### Option B: Render (Backend) + Vercel (Frontend)
+### POST /api/tasks
+Create a new task.
 
-**Backend on Render (free):**
-1. Go to **https://render.com** → New → Web Service
-2. Connect GitHub → select backend folder
-3. Build command: `npm install`
-4. Start command: `node server.js`
-5. Copy the URL (e.g. `https://taskflow-api.onrender.com`)
-
-> ⚠️ Free Render instances sleep after 15 min inactivity. First request may be slow.
-
-**Frontend on Vercel (free):**
-1. Go to **https://vercel.com** → New Project
-2. Import your GitHub repo → set root to `frontend`
-3. Add Environment Variable:
-   - Key: `REACT_APP_API_URL`
-   - Value: your Render backend URL
-4. In `App.js`, change:
-   ```js
-   const API = (process.env.REACT_APP_API_URL || "") + "/api/tasks";
-   ```
-5. Deploy → get a free `.vercel.app` URL
+- **Method:** POST  
+- **Path:** `/api/tasks`  
+- **Request Body:**
+```json
+{
+  "title": "Buy groceries",        // required
+  "description": "Milk, eggs",     // optional
+  "dueDate": "2026-06-10"          // optional
+}
+```
+- **Response:** `201 Created` — the created task object  
+- **Error:** `400 Bad Request` if title is missing
 
 ---
 
-## 🗃️ Data Storage
+### PUT /api/tasks/:id
+Update an existing task (any fields).
 
-Tasks are stored in `backend/tasks.json`. This file is auto-created on first run. On cloud platforms, the file resets when the server restarts (free tier). For permanent storage, upgrade to SQLite or a free DB like **Supabase** (PostgreSQL).
+- **Method:** PUT  
+- **Path:** `/api/tasks/:id`  
+- **Request Body (any combination):**
+```json
+{
+  "title": "Updated title",
+  "description": "Updated desc",
+  "dueDate": "2026-06-15",
+  "completed": true
+}
+```
+- **Response:** `200 OK` — the updated task object  
+- **Error:** `404 Not Found` if task ID doesn't exist
 
 ---
 
-## 🛠 Tech Stack
+### DELETE /api/tasks/:id
+Delete a task permanently.
 
-- **Frontend:** React 18, @dnd-kit (drag & drop), Google Fonts
-- **Backend:** Node.js, Express, UUID
-- **Storage:** JSON file (upgradeable to SQLite/PostgreSQL)
+- **Method:** DELETE  
+- **Path:** `/api/tasks/:id`  
+- **Request Body:** None  
+- **Response:**
+```json
+{ "success": true }
+```
+- **Error:** `404 Not Found` if task ID doesn't exist
+
+---
+
+### PUT /api/tasks/reorder/bulk
+Reorder all tasks (used by drag-and-drop).
+
+- **Method:** PUT  
+- **Path:** `/api/tasks/reorder/bulk`  
+- **Request Body:**
+```json
+{
+  "orderedIds": ["uuid-1", "uuid-2", "uuid-3"]
+}
+```
+- **Response:** `200 OK` — array of reordered task objects
+
+---
+
+## 6. Project Structure
+
+```
+Task_manager/
+├── backend/
+│   ├── server.js        ← Express REST API (all 5 endpoints)
+│   ├── package.json     ← Dependencies: express, cors, uuid
+│   └── tasks.json       ← Auto-created on first run; stores all tasks
+│
+└── frontend/
+    ├── public/
+    │   └── index.html   ← HTML shell for React app
+    ├── src/
+    │   ├── App.js        ← Main React component (all UI + logic)
+    │   ├── App.css       ← All styles (light theme, responsive)
+    │   └── index.js      ← React entry point
+    └── package.json      ← Dependencies: react, @dnd-kit, react-scripts
+```
+
+---
+
+## 7. Next Steps
+
+**What I chose not to do (and why):**
+- **User authentication** — the brief specified single-user, so login/signup was out of scope
+- **Database (SQLite/PostgreSQL)** — JSON file storage is sufficient for a single-user demo; a real DB would be the first upgrade for multi-user support
+- **Due time (not just date)** — kept it simple with date-only for cleaner UX
+
+**What I would build next:**
+- Migrate storage from JSON file to **SQLite** for reliable persistence on free cloud hosts
+- Add **task categories / labels** with color coding
+- Add **priority levels** (Low / Medium / High) with sorting
+- **Email reminders** for due tasks using a cron job + nodemailer
+- **Dark/light mode toggle** to complement the existing light theme
+- **Mobile app** using React Native with the same backend API
