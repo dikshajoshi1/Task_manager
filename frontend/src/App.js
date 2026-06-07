@@ -17,7 +17,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import "./App.css";
 
-const API = "/api/tasks";
+const API = (process.env.REACT_APP_API_URL || "") + "/api/tasks";
 
 // ─── Sortable Task Card ──────────────────────────────────────────────────────
 function TaskCard({ task, onToggle, onEdit, onDelete }) {
