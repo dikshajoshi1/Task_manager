@@ -19,7 +19,7 @@ import "./App.css";
 
 const API = (process.env.REACT_APP_API_URL || "") + "/api/tasks";
 
-// ─── Sortable Task Card ──────────────────────────────────────────────────────
+
 function TaskCard({ task, onToggle, onEdit, onDelete }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: task.id });
@@ -91,7 +91,7 @@ function TaskCard({ task, onToggle, onEdit, onDelete }) {
   );
 }
 
-// ─── Main App ────────────────────────────────────────────────────────────────
+
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
@@ -99,13 +99,13 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Modal state
+
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [form, setForm] = useState({ title: "", description: "", dueDate: "" });
   const [formError, setFormError] = useState("");
 
-  // Confirm delete
+
   const [deleteId, setDeleteId] = useState(null);
 
   const sensors = useSensors(
@@ -113,7 +113,7 @@ export default function App() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  // Fetch tasks
+
   const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
@@ -132,7 +132,7 @@ export default function App() {
     fetchTasks();
   }, [fetchTasks]);
 
-  // Open add modal
+
   const openAdd = () => {
     setEditingTask(null);
     setForm({ title: "", description: "", dueDate: "" });
@@ -140,7 +140,7 @@ export default function App() {
     setShowModal(true);
   };
 
-  // Open edit modal
+
   const openEdit = (task) => {
     setEditingTask(task);
     setForm({
@@ -152,7 +152,7 @@ export default function App() {
     setShowModal(true);
   };
 
-  // Submit form
+
   const handleSubmit = async () => {
     if (!form.title.trim()) {
       setFormError("Title is required.");
@@ -189,7 +189,7 @@ export default function App() {
     }
   };
 
-  // Toggle complete
+
   const handleToggle = async (task) => {
     const res = await fetch(`${API}/${task.id}`, {
       method: "PUT",
@@ -200,14 +200,14 @@ export default function App() {
     setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
   };
 
-  // Delete (confirmed)
+
   const handleDelete = async (id) => {
     await fetch(`${API}/${id}`, { method: "DELETE" });
     setTasks((prev) => prev.filter((t) => t.id !== id));
     setDeleteId(null);
   };
 
-  // Drag end
+
   const handleDragEnd = async (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -224,7 +224,7 @@ export default function App() {
     });
   };
 
-  // Filtered + searched tasks
+
   const visible = tasks.filter((t) => {
     const matchesFilter =
       filter === "All" ||
@@ -240,7 +240,7 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* ── Header ── */}
+
       <header className="header">
         <div className="header-inner">
           <div className="logo">
@@ -257,7 +257,7 @@ export default function App() {
       </header>
 
       <main className="main">
-        {/* ── Stats ── */}
+
         <div className="stats-bar">
           <div className="stat active-stat">
             <span className="stat-num">{activeCount}</span>
@@ -275,7 +275,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* ── Search + Filter ── */}
+
         <div className="controls">
           <div className="search-box">
             <span className="search-icon">🔍</span>
@@ -304,7 +304,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* ── Task List ── */}
+
         {loading ? (
           <div className="state-box">
             <div className="spinner" />
@@ -359,7 +359,6 @@ export default function App() {
         )}
       </main>
 
-      {/* ── Add/Edit Modal ── */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -419,7 +418,6 @@ export default function App() {
         </div>
       )}
 
-      {/* ── Delete Confirmation ── */}
       {deleteId && (
         <div className="modal-overlay" onClick={() => setDeleteId(null)}>
           <div className="modal confirm-modal" onClick={(e) => e.stopPropagation()}>

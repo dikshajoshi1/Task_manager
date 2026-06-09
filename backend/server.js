@@ -11,7 +11,6 @@ const DATA_FILE = path.join(__dirname, "tasks.json");
 app.use(cors());
 app.use(express.json());
 
-// Helper: read tasks from file
 function readTasks() {
   if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify([]));
@@ -19,20 +18,19 @@ function readTasks() {
   return JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
 }
 
-// Helper: write tasks to file
+
 function writeTasks(tasks) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(tasks, null, 2));
 }
 
-// GET all tasks
+
 app.get("/api/tasks", (req, res) => {
   const tasks = readTasks();
-  // Sort by creation date, newest first
   tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   res.json(tasks);
 });
 
-// POST create task
+
 app.post("/api/tasks", (req, res) => {
   const { title, description, dueDate } = req.body;
   if (!title || !title.trim()) {
@@ -53,7 +51,7 @@ app.post("/api/tasks", (req, res) => {
   res.status(201).json(newTask);
 });
 
-// PUT update task
+
 app.put("/api/tasks/:id", (req, res) => {
   const tasks = readTasks();
   const idx = tasks.findIndex((t) => t.id === req.params.id);
@@ -64,7 +62,7 @@ app.put("/api/tasks/:id", (req, res) => {
   res.json(tasks[idx]);
 });
 
-// DELETE task
+
 app.delete("/api/tasks/:id", (req, res) => {
   let tasks = readTasks();
   const exists = tasks.find((t) => t.id === req.params.id);
@@ -75,7 +73,7 @@ app.delete("/api/tasks/:id", (req, res) => {
   res.json({ success: true });
 });
 
-// PUT reorder tasks (drag and drop)
+
 app.put("/api/tasks/reorder/bulk", (req, res) => {
   const { orderedIds } = req.body;
   let tasks = readTasks();
